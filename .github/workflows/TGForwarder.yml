@@ -2,6 +2,7 @@ name: TGForwarder
 
 # 定时触发与代码 push 触发
 on:
+  workflow_dispatch:   # 允许手动触发工作流（仅供调试时使用）
   schedule:
     - cron: '1 7-23 * * *'  # 每天 7 点到 23 点之间的每小时第1分钟执行（可根据需求修改）
   push:
