@@ -76,7 +76,7 @@ class TGForwarder:
         # 过滤今年之前的影视资源
         if not past_years:
             years_list = [str(year) for year in range(1895, current_year)]
-            self.exclude = exclude + years_list
+            self.exclude = exclude+years_list
         else:
             self.exclude = exclude
         self.only_today = only_today
@@ -87,17 +87,6 @@ class TGForwarder:
         self.check_replies = check_replies
         self.download_folder = 'downloads'
         self.try_join = try_join
-        # 从环境变量中读取参数，如果没有就使用传进来的参数
-        import os
-        string_session = string_session or os.getenv("TELEGRAM_SESSION")
-        api_id = api_id or int(os.getenv("API_ID"))
-        api_hash = api_hash or os.getenv("API_HASH")
-        # 打印出环境变量值以进行调试
-        print(f"string_session: {repr(string_session)}")
-        print(f"api_id: {api_id}")
-        print(f"api_hash: {api_hash}")
-        if not string_session or not api_id or not api_hash:
-            raise ValueError("TELEGRAM_SESSION / API_ID / API_HASH 未正确设置。请检查 GitHub Secrets。")
         self.client = TelegramClient(StringSession(string_session), api_id, api_hash, proxy=proxy)
         # if not proxy:
         #     self.client = TelegramClient(StringSession(string_session), api_id, api_hash)
