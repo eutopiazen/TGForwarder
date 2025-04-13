@@ -4,35 +4,38 @@ name: TGForwarder
 on:
   workflow_dispatch:   # 允许手动触发工作流（仅供调试时使用）
   schedule:
-    - cron: '1 7-23 * * *'  # 每天 7 点到 23 点之间的每小时第1分钟执行（可根据需求修改）
+    - cron: '1 7-23 * * *'  # 定时触发
   push:
     paths-ignore:
-      - '**'  # 仅定时触发，不因代码改动而触发
-
-jobs:
-  run_forwarder:
-    runs-on: ubuntu-latest
-    steps:
+      - '**' # 忽略文件变更, **忽略所有
+ 
+jobs: # 执行的工作
+  run_demo_actions:
+    runs-on: ubuntu-latest # 在最新版本的 Ubuntu 操作系统环境下运行
+    steps: # 要执行的步骤
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v4  # 用于将github代码仓库的代码拷贝到工作目录中
         with:
-          token: ${{ secrets.BOT }}  # 如果需要通过 BOT token 检出私有仓库
-
+          # 转到 Settings > Secrets and variables > Actions
+          # 点击 New repository secret，添加 Secret，名称为 BOT，输入你的token
+          token: ${{ secrets.BOT }}
+ 
       - name: Set up Python
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v2 # 用于设置 Python 环境，它允许你指定要在工作环境中使用的 Python 版本
         with:
-          python-version: '3.10.10'  # 根据需要调整 Python 版本
+          python-version: '3.10.10'  # 选择要用的Python版本
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
+      - name: Install requirements.txt
+        run: | # 安装依赖包
+          pip install -r ./requirements.txt 
+ 
+      - name: Run TGForwarder.py
+        run: python TGForwarder.py # 执行py文件
 
-      - name: Run TGForwarder script
-        run: python TGForwarder.py
-
-      - name: Commit updated history file
+      - name: Commit and push history.json file
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add history.json
           git commit -m "Update history.json file" || echo "No changes to commit"
-          git push https://${{ secrets.BOT }}:x-oauth-basic@github.com/${{ github.repository }}.git
+          git push https://${{ secrets.BOT }}:x-oauth-basic@github.com/${GITHUB_REPOSITORY}.git
