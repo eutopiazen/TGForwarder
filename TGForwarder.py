@@ -92,6 +92,10 @@ class TGForwarder:
         string_session = string_session or os.getenv("TELEGRAM_SESSION")
         api_id = api_id or int(os.getenv("API_ID"))
         api_hash = api_hash or os.getenv("API_HASH")
+        # 打印出环境变量值以进行调试
+        print(f"string_session: {repr(string_session)}")
+        print(f"api_id: {api_id}")
+        print(f"api_hash: {api_hash}")
         if not string_session or not api_id or not api_hash:
             raise ValueError("TELEGRAM_SESSION / API_ID / API_HASH 未正确设置。请检查 GitHub Secrets。")
         self.client = TelegramClient(StringSession(string_session), api_id, api_hash, proxy=proxy)
